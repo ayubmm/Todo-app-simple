@@ -22,24 +22,21 @@ export const App = () => {
   const [show, setShow] = useState(false);
   const [text, setText] = useState(false);
   const [listTodo, setListTodo] = useState([]);
-  const refUpdated = useRef(false);
   const refInput = useRef();
 
   // console.log({ show });
   const onChange = (event, selectedDate) => {
-    console.log('onchange', { nilaiRef: refUpdated.current });
     const currentDate = selectedDate;
+    // jadiin show false
+    setShow(false);
     setDate(currentDate);
     if (mode === 'date') {
+      // baru time picker di show
       showTimepicker();
     } else {
       console.log('ISI TEKS', { text });
-      if (text && !refUpdated.current) {
-        refUpdated.current = true;
-        setListTodo((nilaiTodoSekarang) => [...nilaiTodoSekarang, { date: currentDate, text }]);
-        setText('');
-      }
-      setShow(false);
+      setListTodo((nilaiTodoSekarang) => [...nilaiTodoSekarang, { date: currentDate, text }]);
+      setText('');
     }
   };
 
@@ -62,7 +59,7 @@ export const App = () => {
   const addTodo = () => {
     // minta input tanggal
     if (text) {
-      refUpdated.current = false;
+      // refUpdated.current = false;
       showDatepicker();
     }
   };
@@ -70,8 +67,6 @@ export const App = () => {
   const focusToInput = () => {
     refInput.current.focus();
   };
-
-  console.log({ ref: refInput.current });
 
   const blurFromInput = () => {
     refInput.current.blur();
@@ -81,7 +76,6 @@ export const App = () => {
     <View style={{ flex: 1 }}>
       <Button onPress={focusToInput} title="FOKUS ke Input" />
       <Button onPress={blurFromInput} title="BLUR Input" />
-      <Text>selected: {date.toLocaleString()}</Text>
       {show && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -92,11 +86,23 @@ export const App = () => {
         />
       )}
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white', paddingHorizontal: 5 }}
+        contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white', paddingHorizontal: 10 }}
       >
         {listTodo.map(({ text, date }) => (
-          <View style={{ height: 100, backgroundColor: 'green', marginVertical: 5 }}>
-            <Text>{text}</Text>
+          <View
+            style={{
+              height: 100,
+              backgroundColor: 'white',
+              marginVertical: 5,
+              padding: 8,
+              borderRadius: 10,
+              elevation: 5,
+            }}
+          >
+            <Text style={{ color: 'gray', marginBottom: 5, fontSize: 12 }}>
+              {date.toLocaleString()}
+            </Text>
+            <Text style={{ color: 'black' }}>{text}</Text>
           </View>
         ))}
       </ScrollView>
@@ -108,11 +114,16 @@ export const App = () => {
           style={{
             width: '80%',
             padding: 5,
-            backgroundColor: 'gray',
+            backgroundColor: '#ededed',
             color: 'black',
             height: 100,
             textAlignVertical: 'top',
+            elevation: 5,
+            borderWidth: 0.5,
+            borderColor: '#ededed9c',
           }}
+          placeholder="write your todo..."
+          placeholderTextColor="gray"
         />
         <TouchableOpacity
           onPress={addTodo}
@@ -123,7 +134,7 @@ export const App = () => {
             alignItems: 'center',
           }}
         >
-          <Text>Tambah</Text>
+          <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>Tambah</Text>
         </TouchableOpacity>
       </View>
     </View>
