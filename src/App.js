@@ -140,5 +140,6 @@ export const App = () => {
     </View>
   );
 };
+// tes
 
 export default App;
