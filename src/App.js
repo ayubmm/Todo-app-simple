@@ -13,7 +13,7 @@
 
 // export default App;
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { Button, View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 export const App = () => {
@@ -26,15 +26,17 @@ export const App = () => {
 
   // console.log({ show });
   const onChange = (event, selectedDate) => {
+    // console.log({ event });
     const currentDate = selectedDate;
     // jadiin show false
     setShow(false);
+    // kalau cancel maka jangan tambahkan todo maupun tanya waktu
+    if (event.type === 'dismissed') return;
     setDate(currentDate);
     if (mode === 'date') {
       // baru time picker di show
       showTimepicker();
     } else {
-      console.log('ISI TEKS', { text });
       setListTodo((nilaiTodoSekarang) => [...nilaiTodoSekarang, { date: currentDate, text }]);
       setText('');
     }
@@ -72,6 +74,18 @@ export const App = () => {
     refInput.current.blur();
   };
 
+  const deleteTodo = (index) => () => {
+    Alert.alert('Hapus Todo', 'Anda yakin untuk menghapus?', [
+      {
+        text: 'No',
+      },
+      {
+        text: 'Yes',
+        onPress: () => setListTodo(listTodo.filter((_, i) => i !== index)),
+      },
+    ]);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <Button onPress={focusToInput} title="FOKUS ke Input" />
@@ -88,8 +102,9 @@ export const App = () => {
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white', paddingHorizontal: 10 }}
       >
-        {listTodo.map(({ text, date }) => (
+        {listTodo.map(({ text, date }, idx) => (
           <View
+            key={idx}
             style={{
               height: 100,
               backgroundColor: 'white',
@@ -97,12 +112,30 @@ export const App = () => {
               padding: 8,
               borderRadius: 10,
               elevation: 5,
+              flexDirection: 'row',
             }}
           >
-            <Text style={{ color: 'gray', marginBottom: 5, fontSize: 12 }}>
-              {date.toLocaleString()}
-            </Text>
-            <Text style={{ color: 'black' }}>{text}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: 'gray', marginBottom: 5, fontSize: 12 }}>
+                {date.toLocaleString()}
+              </Text>
+              <Text style={{ color: 'black' }}>{text}</Text>
+            </View>
+            <TouchableOpacity
+              onPress={deleteTodo(idx)}
+              style={{
+                backgroundColor: 'red',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: 10,
+                borderRadius: 5,
+                position: 'absolute',
+                right: 10,
+                bottom: 10,
+              }}
+            >
+              <Text style={{ color: 'white', fontWeight: 'bold' }}>HAPUS</Text>
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
