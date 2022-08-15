@@ -140,6 +140,6 @@ export const App = () => {
     </View>
   );
 };
-// lagi
+// lagi 2
 
 export default App;
